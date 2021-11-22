@@ -1,16 +1,26 @@
 use md4::{Md4, Digest};
-use std::env;
-use std::fs::File;
-use std::io::{self, BufRead, Write};
+use std::io::{BufRead, BufReader, Write, stdin, stdout};
 
 fn main() {
+  // Flamegraph generation for optimisations
   //let guard = pprof::ProfilerGuard::new(100).unwrap();
 
-  let args: Vec<String> = env::args().collect();
-  let file = File::open(&args[1]);
-
+  /* We could make reading from a file or stdin optional, but it's slower
+  let arg = env::args().nth(1);
   // Specifying the capacity on the buffered reader gives some speedup
-  let mut bufrd = io::BufReader::with_capacity(1000, file.unwrap());
+  let mut bufrd: Box<dyn BufRead> = match arg {
+    None => Box::new(BufReader::with_capacity(1000, io::stdin())),
+    Some(filename) => Box::new(BufReader::with_capacity(1000, File::open(filename).unwrap()))
+  };
+  */
+
+  /* We could just read a file directly, but it's slowe
+  let args: Vec<String> = env::args().collect();
+  let mut bufrd = io::BufReader::with_capacity(1000, File::open(&args[1]).unwrap());
+  */
+
+  // Reading from stdin is faster than opening a file
+  let mut bufrd = BufReader::with_capacity(1000, stdin());
 
   // Pre-allocate the objects we'll reuse to reduce alloc's
   let mut clear = String::with_capacity(100); // cleartext password
@@ -37,12 +47,12 @@ fn main() {
     utf16.clear();
     // flush the write buffer
     if out.len() >= 8192 { // make sure this comparison aligns with capacity
-      io::stdout().write_all(&out).unwrap();
+      stdout().write_all(&out).unwrap();
       out.clear();
     }
   }
   // flush what's left
-  io::stdout().write_all(&out).unwrap();
+  stdout().write_all(&out).unwrap();
   /*
   if let Ok(report) = guard.report().build() {
     let file = File::create("flamegraph.svg").unwrap();

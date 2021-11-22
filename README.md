@@ -3,9 +3,9 @@ A fast wordlist to nthash converter
 
 ## Usage
 
-Pass it a UTF8 encoded wordlist, and write the output to a file.
+Pass it a UTF8 encoded wordlist on stdin, and write the output to a file.
 
-`./nthasher <wordlist> > wordlist.nthashes`
+`./nthasher < wordlist > wordlist.nthashes`
 
 ## UTF8 Encoding
 
@@ -26,6 +26,6 @@ You'll need rust and cargo. The easiest way to get it is from https://rustup.rs 
 Sample hyperfine output for 10 runs against rockyou on an M1 Pro efficency core are below:
 
 ```
-  Time (mean ± σ):      2.860 s ±  0.016 s    [User: 2.779 s, System: 0.080 s]
-  Range (min … max):    2.851 s …  2.899 s    10 runs
+  Time (mean ± σ):      2.820 s ±  0.002 s    [User: 2.773 s, System: 0.046 s]
+  Range (min … max):    2.817 s …  2.824 s    20 runs
 ```
